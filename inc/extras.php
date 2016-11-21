@@ -11,18 +11,22 @@
  * Get our wp_nav_menu() fallback, wp_pag_menu(), to show a home link.
  *
  * @param array $args Configuration arguments.
+ *
  * @return array
  */
 function gravit_page_menu_args( $args ) {
 	$args['show_home'] = true;
+
 	return $args;
 }
+
 add_filter( 'wp_page_menu_args', 'gravit_page_menu_args' );
 
 /**
  * Adds custom classes to the array of body classes.
  *
  * @param array $classes Classes for the body element.
+ *
  * @return array
  */
 function gravit_body_classes( $classes ) {
@@ -33,6 +37,7 @@ function gravit_body_classes( $classes ) {
 
 	return $classes;
 }
+
 add_filter( 'body_class', 'gravit_body_classes' );
 
 /**
@@ -40,6 +45,7 @@ add_filter( 'body_class', 'gravit_body_classes' );
  *
  * @param string $title Default title text for current view.
  * @param string $sep Optional separator.
+ *
  * @return string The filtered title.
  */
 function gravit_wp_title( $title, $sep ) {
@@ -65,6 +71,7 @@ function gravit_wp_title( $title, $sep ) {
 
 	return $title;
 }
+
 add_filter( 'wp_title', 'gravit_wp_title', 10, 2 );
 
 /**
@@ -86,95 +93,162 @@ function gravit_setup_author() {
 		$GLOBALS['authordata'] = get_userdata( $wp_query->post->post_author );
 	}
 }
+
 add_action( 'wp', 'gravit_setup_author' );
 
 /**
  * Adding Page Meta Box for Social Media Profiles
  */
- 
-add_action( 'add_meta_boxes', 'gravit_meta_box_add' );  
-function gravit_meta_box_add() {  
-    add_meta_box( 'social', __( 'Social Profiles', 'gravit' ), 'gravit_meta_box', 'page', 'normal', 'high' );  
-}  
-  
-function gravit_meta_box() {  
-    _e( 'If you are using the About Me Template enter your social profile links here.', 'gravit' );     
 
- 	global $post;  
-	wp_nonce_field( 'gravit_meta_box_nonce', 'meta_box_nonce' ); 
-	?>  
-	<p>  
-	    <label for="gravit_facebook"><?php _e( 'Facebook', 'gravit' );  ?></label><br />  
-	    <input type="text" name="gravit_facebook" id="gravit_facebook" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_facebook', true ) ); ?>" />  
-	</p>
-	<p>  
-	    <label for="gravit_twitter"><?php _e( 'Twitter', 'gravit' );  ?></label><br />   
-	    <input type="text" name="gravit_twitter" id="gravit_twitter" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_twitter', true ) ); ?>" />  
-	</p>
-	<p>  
-	    <label for="gravit_google-plus"><?php _e( 'Google+', 'gravit' );  ?></label><br /> 
-	    <input type="text" name="gravit_google-plus" id="gravit_google-plus" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_google-plus', true ) ); ?>" />  
-	</p>
-	<p>  
-	    <label for="gravit_linkedin"><?php _e( 'LinkedIn', 'gravit' );  ?></label><br />   
-	    <input type="text" name="gravit_linkedin" id="gravit_linkedin" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_linkedin', true ) ); ?>" />  
-	</p>
-	<p>  
-	    <label for="gravit_youtube"><?php _e( 'YouTube', 'gravit' );  ?></label><br />   
-	    <input type="text" name="gravit_youtube" id="gravit_youtube" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_youtube', true ) ); ?>" />  
-	</p>
-	<p>  
-	    <label for="gravit_instagram"><?php _e( 'Instagram', 'gravit' );  ?></label><br />  
-	    <input type="text" name="gravit_instagram" id="gravit_instagram" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_instagram', true ) ); ?>" />  
-	</p>
-	<p>  
-	    <label for="gravit_pinterest"><?php _e( 'Pinterest', 'gravit' );  ?></label><br />  
-	    <input type="text" name="gravit_pinterest" id="gravit_pinterest" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_pinterest', true ) ); ?>" />  
-	</p>
+add_action( 'add_meta_boxes', 'gravit_meta_box_add' );
+function gravit_meta_box_add() {
+	add_meta_box( 'social', __( 'Social Profiles', 'gravit' ), 'gravit_meta_box', 'page', 'normal', 'high' );
+}
 
+function gravit_meta_box() {
+	_e( 'If you are using the About Me Template enter your social profile links here.', 'gravit' );
 
-<?php }  
-
-add_action( 'save_post', 'gravit_meta_box_save' );  
-function gravit_meta_box_save( $post_id )  
-{  
 	global $post;
-    // Bail if we're doing an auto save  
-    if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return; 
-     
-    // if our nonce isn't there, or we can't verify it, bail 
-    if( !isset( $_POST['meta_box_nonce'] ) || !wp_verify_nonce( $_POST['meta_box_nonce'], 'gravit_meta_box_nonce' ) ) return; 
-     
-    // if our current user can't edit this post, bail  
-    if ( ! current_user_can( 'edit_post', $post->ID ) )
-    return;
+	wp_nonce_field( 'gravit_meta_box_nonce', 'meta_box_nonce' );
+	?>
+	<p>
+		<label for="gravit_facebook"><?php _e( 'Facebook', 'gravit' ); ?></label><br/>
+		<input type="text" name="gravit_facebook" id="gravit_facebook" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_facebook', true ) ); ?>"/>
+	</p>
+	<p>
+		<label for="gravit_twitter"><?php _e( 'Twitter', 'gravit' ); ?></label><br/>
+		<input type="text" name="gravit_twitter" id="gravit_twitter" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_twitter', true ) ); ?>"/>
+	</p>
+	<p>
+		<label for="gravit_google-plus"><?php _e( 'Google+', 'gravit' ); ?></label><br/>
+		<input type="text" name="gravit_google-plus" id="gravit_google-plus" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_google-plus', true ) ); ?>"/>
+	</p>
+	<p>
+		<label for="gravit_linkedin"><?php _e( 'LinkedIn', 'gravit' ); ?></label><br/>
+		<input type="text" name="gravit_linkedin" id="gravit_linkedin" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_linkedin', true ) ); ?>"/>
+	</p>
+	<p>
+		<label for="gravit_youtube"><?php _e( 'YouTube', 'gravit' ); ?></label><br/>
+		<input type="text" name="gravit_youtube" id="gravit_youtube" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_youtube', true ) ); ?>"/>
+	</p>
+	<p>
+		<label for="gravit_instagram"><?php _e( 'Instagram', 'gravit' ); ?></label><br/>
+		<input type="text" name="gravit_instagram" id="gravit_instagram" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_instagram', true ) ); ?>"/>
+	</p>
+	<p>
+		<label for="gravit_pinterest"><?php _e( 'Pinterest', 'gravit' ); ?></label><br/>
+		<input type="text" name="gravit_pinterest" id="gravit_pinterest" value="<?php echo esc_attr( get_post_meta( $post->ID, 'gravit_pinterest', true ) ); ?>"/>
+	</p>
 
-    // Make sure your data is set before trying to save it  
-    if( isset( $_POST['gravit_facebook'] ) )  {
-        update_post_meta( $post_id, 'gravit_facebook', $_POST['gravit_facebook'] );  
-    }
 
-      if( isset( $_POST['gravit_twitter'] ) )  {
-        update_post_meta( $post_id, 'gravit_twitter', $_POST['gravit_twitter'] );  
-    }
+<?php }
 
-      if( isset( $_POST['gravit_google-plus'] ) )  {
-        update_post_meta( $post_id, 'gravit_google-plus', $_POST['gravit_google-plus'] );  
-    }
+add_action( 'save_post', 'gravit_meta_box_save' );
+function gravit_meta_box_save( $post_id ) {
+	global $post;
+	// Bail if we're doing an auto save
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
 
-      if( isset( $_POST['gravit_linkedin'] ) )  {
-        update_post_meta( $post_id, 'gravit_linkedin', $_POST['gravit_linkedin'] );  
-    }
+	// if our nonce isn't there, or we can't verify it, bail
+	if ( ! isset( $_POST['meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['meta_box_nonce'], 'gravit_meta_box_nonce' ) ) {
+		return;
+	}
 
-      if( isset( $_POST['gravit_youtube'] ) )  {
-        update_post_meta( $post_id, 'gravit_youtube', $_POST['gravit_youtube'] );  
-    }
+	// if our current user can't edit this post, bail
+	if ( ! current_user_can( 'edit_post', $post->ID ) ) {
+		return;
+	}
 
-       if( isset( $_POST['gravit_instagram'] ) )  {
-        update_post_meta( $post_id, 'gravit_instagram', $_POST['gravit_instagram'] );  
-    }  
+	// Make sure your data is set before trying to save it
+	if ( isset( $_POST['gravit_facebook'] ) ) {
+		update_post_meta( $post_id, 'gravit_facebook', $_POST['gravit_facebook'] );
+	}
 
-       if( isset( $_POST['gravit_pinterest'] ) )  {
-        update_post_meta( $post_id, 'gravit_pinterest', $_POST['gravit_pinterest'] );  
-    }            
-} ?>
+	if ( isset( $_POST['gravit_twitter'] ) ) {
+		update_post_meta( $post_id, 'gravit_twitter', $_POST['gravit_twitter'] );
+	}
+
+	if ( isset( $_POST['gravit_google-plus'] ) ) {
+		update_post_meta( $post_id, 'gravit_google-plus', $_POST['gravit_google-plus'] );
+	}
+
+	if ( isset( $_POST['gravit_linkedin'] ) ) {
+		update_post_meta( $post_id, 'gravit_linkedin', $_POST['gravit_linkedin'] );
+	}
+
+	if ( isset( $_POST['gravit_youtube'] ) ) {
+		update_post_meta( $post_id, 'gravit_youtube', $_POST['gravit_youtube'] );
+	}
+
+	if ( isset( $_POST['gravit_instagram'] ) ) {
+		update_post_meta( $post_id, 'gravit_instagram', $_POST['gravit_instagram'] );
+	}
+
+	if ( isset( $_POST['gravit_pinterest'] ) ) {
+		update_post_meta( $post_id, 'gravit_pinterest', $_POST['gravit_pinterest'] );
+	}
+}
+
+/**
+ * Add new fields above 'Update' button.
+ *
+ * @param WP_User $user User object.
+ */
+function max_additional_profile_fields( $user ) {
+	$page_id   = get_user_meta( $user->ID, 'page_introduce', true );
+	$all_pages = get_pages();
+	?>
+	<h3>Extra profile information</h3>
+
+	<table class="form-table">
+		<tr>
+			<th><label for="page_introduce">Page introduce</label></th>
+			<td>
+				<select id="page_introduce" name="page_introduce">
+					<option value="">Select a page</option>
+					<?php foreach ( $all_pages as $page ): ?>
+						<option value="<?php echo esc_attr( $page->ID ) ?>"
+							<?php selected( true, $page->ID == $page_id ) ?>><?php echo esc_html( $page->post_title ); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</td>
+		</tr>
+	</table>
+	<?php
+}
+
+add_action( 'show_user_profile', 'max_additional_profile_fields' );
+add_action( 'edit_user_profile', 'max_additional_profile_fields' );
+
+function max_save_profile_fields( $user_id ) {
+
+	if ( ! current_user_can( 'edit_user', $user_id ) ) {
+		return false;
+	}
+
+	if ( empty( $_POST['page_introduce'] ) ) {
+		return false;
+	}
+
+	update_user_meta( $user_id, 'page_introduce', $_POST['page_introduce'] );
+}
+
+add_action( 'personal_options_update', 'max_save_profile_fields' );
+add_action( 'edit_user_profile_update', 'max_save_profile_fields' );
+
+function max_header_author() {
+	$author    = get_user_by( 'slug', get_query_var( 'author_name' ) );
+	$author_id = $author->ID;
+
+	$page = get_user_meta( $author_id, 'page_introduce', true );
+	if ( empty( $page ) ) {
+		printf( __( 'Tác giả: %s', 'gravit' ), '<span class="vcard">' . get_the_author() . '</span>' );
+
+		return;
+	}
+
+	$page_url = get_permalink( $page );
+	printf( __( 'Tác giả: <a href="%s">%s</a>', 'gravit' ), $page_url, '<span class="vcard">' . get_the_author() . '</span>' );
+}
